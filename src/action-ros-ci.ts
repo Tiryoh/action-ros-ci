@@ -640,10 +640,12 @@ done`;
 	// if ref is set this overrides anything calculated above
 	commitRef = core.getInput("ref") || commitRef;
 	const repoFilePath = path.join(rosWorkspaceDir, "package.repo");
+	const targetRepoPath = path.join(rosWorkspaceDir, "src", repo["repo"]);
 	// Add a random string prefix to avoid naming collisions when checking out the test repository
-	const randomStringPrefix = Math.random().toString(36).substring(2, 15);
+	// only if the repository already exists
+	const downloadPathPrefix = fs.existsSync(targetRepoPath) ? Math.random().toString(36).substring(2, 15) + "/" : "";
 	const repoFileContent = `repositories:
-  ${randomStringPrefix}/${repo["repo"]}:
+  ${downloadPathPrefix}${repo["repo"]}:
     type: git
     url: '${githubServerUrl}/${repoFullName}.git'
     version: '${commitRef}'`;
